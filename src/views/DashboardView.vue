@@ -67,7 +67,7 @@
                     <v-col cols="10">
                       <v-btn id="btn-delete-account" class="bg-black mb-5" elevation="2" density="comfortable" block
                         color="#000" @click="updateUser()">Save changes</v-btn>
-                      
+
                       <v-dialog transition="dialog-top-transition" width="auto">
                         <template v-slot:activator="{ props }">
                           <v-btn class="mx-0" id="btn-delete-account" variant="tonal" elevation="0" v-bind="props"
@@ -136,7 +136,27 @@
                     <h2>{{ task.title }}</h2>
                   </v-col>
                   <v-col cols="2 text-end">
-                    <v-icon :class="{ 'icon-pending-delete': task.status === 'PENDING' }" icon="mdi-delete"></v-icon>
+                    <v-dialog transition="dialog-top-transition" width="auto">
+                      <template v-slot:activator="{ props }">
+                        <v-icon :class="{ 'icon-pending-delete': task.status === 'PENDING' }"
+                          v-bind="props" icon="mdi-delete"></v-icon>
+                      </template>
+                      <template v-slot:default="{ isActive }">
+                        <v-card>
+                          <v-card-title>
+                            <p>
+                              Do you want to delete this task?
+                            </p>
+                          </v-card-title>
+
+                          <v-card-actions class="justify-end">
+                            <v-btn variant="text" @click="deleteTask(task.taskId, index); isActive.value = false">DELETE</v-btn>
+                            <v-btn variant="text" @click="isActive.value = false">CANCEL</v-btn>
+
+                          </v-card-actions>
+                        </v-card>
+                      </template>
+                    </v-dialog>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -335,6 +355,16 @@ export default {
             name: 'home'
           });
         });
+    },
+    async deleteTask(taskId, index) {
+      await axios.delete(`http://localhost:3000/api/tasks/${taskId}`, this.config)
+        .then((response) => {
+          console.log(response);
+          this.tasks.splice(index, 1);
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     logout() {
       localStorage.removeItem("token")
