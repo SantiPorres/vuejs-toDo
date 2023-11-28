@@ -1,9 +1,9 @@
 <template>
   <v-container id="loginForm" fluid class="bg-black d-flex align-center justify-center">
     <v-row class="justify-center">
-      <v-col class="bg-white" cols="12" sm="6" md="5" lg="4">
-        <v-sheet class="mx-auto rounded">
-          <v-row class="justify-center bg-red">
+      <v-col class="" cols="12" sm="6" md="5" lg="4">
+        <v-sheet class="mx-auto rounded py-10">
+          <v-row class="justify-center">
             <h1 v-if="viewContainer === 1">Log In</h1>
             <h1 v-if="viewContainer === 2">Register</h1>
           </v-row>
@@ -15,7 +15,7 @@
               <p v-for="message in successMessages" :key="message">{{ message }}</p>
             </v-alert>
           </v-row>
-          <v-row v-if="viewContainer === 1" class="justify-center bg-blue">
+          <v-row v-if="viewContainer === 1" class="justify-center">
             <v-col cols="10">
               <v-form fast-fail @submit.prevent class="">
                 <v-text-field v-model="loginForm.username" label="Username or email address"></v-text-field>
@@ -24,7 +24,7 @@
               </v-form>
             </v-col>
           </v-row>
-          <v-row v-if="viewContainer === 2" class="justify-center bg-blue">
+          <v-row v-if="viewContainer === 2" class="justify-center">
             <v-col cols="10">
               <v-form fast-fail @submit.prevent class="">
                 <v-text-field v-model="registerForm.username" label="Username" required></v-text-field>
@@ -40,7 +40,7 @@
             </v-col>
           </v-row>
 
-          <v-row class="justify-center bg-yellow">
+          <v-row class="justify-center">
 
             <v-col cols="10" v-if="viewContainer === 1">
               <v-btn type="submit" block @click="submitLoginForm">Log In</v-btn>
@@ -110,8 +110,9 @@ export default ({
           const token = response.data.accessToken
           const user = response.data.user
 
+          
           //this.$store.commit('setToken', token)
-
+          
           localStorage.setItem("token", token)
           localStorage.setItem("user", JSON.stringify(user))
 

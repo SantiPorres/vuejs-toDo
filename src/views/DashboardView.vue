@@ -4,7 +4,98 @@
     <v-main class="d-flex align-center justify-center">
       <v-app-bar :elevation="6" rounded>
         <v-app-bar-nav-icon>
-          <v-avatar icon="$vuetify" image="https://cdn.vuetifyjs.com/images/john-smirk.png" size="40"></v-avatar>
+
+          <v-dialog transition="dialog-top-transition" width="auto" @click:outside="restartEditForm()">
+            <template v-slot:activator="{ props }">
+              <v-avatar icon="$vuetify" image="https://cdn.vuetifyjs.com/images/john-smirk.png" size="40"
+                v-bind="props"></v-avatar>
+            </template>
+            <template v-slot:default="{ isActive }">
+              <v-card class="py-5" min-width="400px">
+                <v-row>
+                  <v-col cols="2" class="offset-10">
+                    <v-icon icon="mdi-close" @click="isActive.value = false; restartEditForm()"></v-icon>
+                  </v-col>
+                </v-row>
+                <v-row class="px-4 align-center text-center">
+                  <v-col cols="12" class="py-0 justify-center align-center text-center">
+                    <v-avatar icon="$vuetify" image="https://cdn.vuetifyjs.com/images/john-smirk.png" size="150">
+                    </v-avatar>
+                  </v-col>
+                </v-row>
+                <v-card-title class="text-center mt-5">
+                  <p>YOUR ACCOUNT</p>
+                </v-card-title>
+
+                <v-card-text class="py-5">
+                  <v-row class="align-center text-center justify-center">
+
+                    <v-col cols="10" class="">
+                      <!-- Username -->
+                      <v-row>
+                        <v-col cols="12" class="float-start px-0">
+                          <v-text-field v-model="updatedUser.username" variant="underlined" label="Username" required
+                            hide-details></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <!-- Email -->
+                      <v-row>
+                        <v-col cols="12" class="float-start px-0">
+                          <v-text-field v-model="updatedUser.email" variant="underlined" label="Email" required
+                            hide-details></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <!-- Phone Number -->
+                      <v-row>
+                        <v-col cols="12" class="float-start px-0">
+                          <v-text-field v-model="updatedUser.phoneNumber" variant="underlined" label="Phone number"
+                            required hide-details></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+
+                    <!-- <v-col cols="4" class="text-end">
+                      <v-btn v-if="areEditFieldsDisabled" @click="toogleEditFields()" icon="mdi-pencil" elevation="0"></v-btn>
+                      <v-btn v-if="!areEditFieldsDisabled" @click="updateUser()">SAVE</v-btn>
+                    </v-col> -->
+
+                  </v-row>
+                </v-card-text>
+
+                <v-card-actions class="justify-end">
+                  <v-row class="justify-center align-center text-center">
+                    <v-col cols="10">
+                      <v-btn id="btn-delete-account" class="bg-black mb-5" elevation="2" density="comfortable" block
+                        color="#000" @click="updateUser()">Save changes</v-btn>
+                      
+                      <v-dialog transition="dialog-top-transition" width="auto">
+                        <template v-slot:activator="{ props }">
+                          <v-btn class="mx-0" id="btn-delete-account" variant="tonal" elevation="0" v-bind="props"
+                            density="comfortable" block color="#c90000">Delete account</v-btn>
+                        </template>
+                        <template v-slot:default="{ isActive }">
+                          <v-card>
+                            <v-card-title>
+                              <p>
+                                Do you really want to delete your account?
+                              </p>
+                            </v-card-title>
+
+                            <v-card-actions class="justify-end">
+                              <v-btn variant="text" @click="deleteUser(); isActive = false">YES, DELETE MY ACCOUNT</v-btn>
+                              <v-btn variant="text" @click="isActive.value = false">CANCEL</v-btn>
+
+                            </v-card-actions>
+                          </v-card>
+                        </template>
+                      </v-dialog>
+                    </v-col>
+                  </v-row>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+
         </v-app-bar-nav-icon>
         <v-app-bar-title>
           <p class="ms-1">Welcome {{ user.username }}</p>
@@ -34,19 +125,25 @@
         </v-col>
       </v-app-bar>
 
-      <v-container fluid>
-        <v-row class="">
-          <v-col cols="12" sm="5" md="4" lg="3" v-for="(task, index) in tasks" :key="index" :title="task.title">
-            <v-card elevation="4">
-              <v-card-title>
+      <v-container>
+        <v-row class="justify-center">
+          <v-col cols="12" sm="8" md="6" lg="4" v-for="(task, index) in tasks" :key="index" :title="task.title">
+            <v-card :elevation="{ 4: task.status === 'PENDING', 0: task.status === 'DONE' }"
+              :class="{ 'done-card': task.status === 'DONE' }">
+              <v-card-text id="card-text" class="pb-0">
                 <v-row>
-                  <v-col cols="12">
-                    <h3>{{ task.title }}</h3>
+                  <v-col cols="10">
+                    <h2>{{ task.title }}</h2>
+                  </v-col>
+                  <v-col cols="2 text-end">
+                    <v-icon :class="{ 'icon-pending-delete': task.status === 'PENDING' }" icon="mdi-delete"></v-icon>
                   </v-col>
                 </v-row>
-              </v-card-title>
-              <v-card-text id="card-text" class="pb-0">
-                <p>{{ task.description }}</p>
+                <v-row>
+                  <v-col cols="12">
+                    <p>{{ task.description }}</p>
+                  </v-col>
+                </v-row>
               </v-card-text>
               <v-card-actions>
                 <v-checkbox label="DONE" :model-value="task.status === 'PENDING' ? false : true"
@@ -58,8 +155,8 @@
           <v-col cols="auto">
             <v-dialog transition="dialog-top-transition" width="auto">
               <template v-slot:activator="{ props }">
-                <v-chip v-bind="props" @click="createTask" id="fixed-bottom-right" prepend-icon="mdi-plus"
-                  variant="elevated">
+                <v-chip v-bind="props" @click="createTask" id="new-task-chip" prepend-icon="mdi-plus" variant="elevated"
+                  size="x-large">
                   New task
                 </v-chip>
               </template>
@@ -79,10 +176,11 @@
 
                     </v-form>
                   </v-sheet>
-                  
+
                   <v-card-actions class="justify-end">
                     <v-col cols="12">
-                      <v-btn type="submit" @click="createTask() ; isActive.value = false" block class="btn btn-success mt-2">CREATE</v-btn>
+                      <v-btn type="submit" @click="createTask() ; isActive.value = false" block
+                        class="btn btn-success mt-2">CREATE</v-btn>
                       <v-btn class="mx-0 px-0" block @click="isActive.value = false">CANCEL</v-btn>
                     </v-col>
 
@@ -109,6 +207,17 @@ export default {
     return {
       tasks: [],
       user: {},
+      config: {
+        headers: {
+          'api_token': localStorage.getItem('token')
+        }
+      },
+      updatedUser: {
+        username: '',
+        email: '',
+        phoneNumber: ''
+      },
+      areEditFieldsDisabled: true,
       newTask: {
         title: '',
         description: '',
@@ -117,16 +226,25 @@ export default {
     }
   },
   mounted() {
-    
+
     const userString = localStorage.getItem('user');
     if (userString) {
       this.user = JSON.parse(userString);
+
+      this.updatedUser = {
+        username: this.user.username,
+        email: this.user.email,
+        phoneNumber: this.user.phoneNumber
+      }
     }
     document.title = `${this.user.username} | Dashboard `
 
     this.getTasks()
   },
   methods: {
+    toogleEditFields() {
+      this.areEditFieldsDisabled = !this.areEditFieldsDisabled
+    },
     async getTasks() {
       const config = {
         headers: {
@@ -143,17 +261,12 @@ export default {
         })
     },
     async updateStatus(taskId, currentStatus, index) {
-      const config = {
-        headers: {
-          'api_token': localStorage.getItem('token')
-        }
-      }
 
       const dataToUpdate = {
         status: currentStatus
       }
 
-      await axios.patch(`http://localhost:3000/api/tasks/${taskId}`, dataToUpdate, config)
+      await axios.patch(`http://localhost:3000/api/tasks/${taskId}`, dataToUpdate, this.config)
         .then((response) => {
           console.log(response)
           console.log(currentStatus)
@@ -173,14 +286,9 @@ export default {
         })
     },
     async createTask() {
-      const config = {
-        headers: {
-          'api_token': localStorage.getItem('token')
-        }
-      }
 
-      await axios.post('http://localhost:3000/api/tasks', this.newTask, config)
-        .then((response)=> {
+      await axios.post('http://localhost:3000/api/tasks', this.newTask, this.config)
+        .then((response) => {
           console.log(response.data)
 
           this.newTask.title = ''
@@ -192,12 +300,53 @@ export default {
           console.error(error)
         })
     },
+    async updateUser() {
+      if (
+        this.user.username === this.updatedUser.username
+        && this.user.email === this.updatedUser.email
+        && this.user.phoneNumber === this.updatedUser.phoneNumber
+      ) {
+        this.toogleEditFields();
+        return;
+      }
+
+      await axios.patch('http://localhost:3000/api/users', this.updatedUser, this.config)
+        .then((response) => {
+          this.user.username = this.updatedUser.username;
+          this.user.email = this.updatedUser.email;
+          this.user.phoneNumber = this.updatedUser.phoneNumber;
+
+          console.log(response);
+
+          this.toogleEditFields();
+        })
+        .catch(error => {
+          this.updatedUser.username = this.user.username;
+          this.updatedUser.email = this.user.email;
+          this.updatedUser.phoneNumber = this.user.phoneNumber;
+          console.log(error);
+        })
+    },
+    async deleteUser() {
+      await axios.delete('http://localhost:3000/api/users', this.config)
+        .then((response) => {
+          console.log(response)
+          this.$router.push({
+            name: 'home'
+          });
+        });
+    },
     logout() {
       localStorage.removeItem("token")
       localStorage.removeItem("user")
       this.$router.push({
         name: 'home'
       })
+    },
+    restartEditForm() {
+      this.updatedUser.username = this.user.username;
+      this.updatedUser.email = this.user.email;
+      this.updatedUser.phoneNumber = this.user.phoneNumber;
     }
   }
 }
@@ -213,9 +362,39 @@ export default {
   margin-bottom: 0;
 }
 
-#fixed-bottom-right {
+#new-task-chip {
   position: fixed;
-  bottom: 16px;
-  right: 16px;
+  bottom: 50px;
+  right: 50px;
+}
+
+#pencil-icon {
+  opacity: 0.3;
+}
+
+#pencil-icon:hover {
+  opacity: 1;
+}
+
+#btn-delete-account {
+  opacity: 0.5;
+}
+
+#btn-delete-account:hover {
+  opacity: 1;
+}
+
+.done-card {
+  background-color: rgb(2, 51, 32);
+  color: white;
+  opacity: 0.5;
+}
+
+.icon-pending-delete {
+  opacity: 0.1;
+}
+
+.icon-pending-delete:hover {
+  opacity: 1;
 }
 </style>
