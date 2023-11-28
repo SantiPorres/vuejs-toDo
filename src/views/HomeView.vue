@@ -7,13 +7,15 @@
             <h1 v-if="viewContainer === 1">Log In</h1>
             <h1 v-if="viewContainer === 2">Register</h1>
           </v-row>
-          <v-row cols="10">
-            <v-alert closable text="" type="error" v-if="errorMessages.length">
-              <p v-for="error in errorMessages" :key="error">{{ error }}</p>
-            </v-alert>
-            <v-alert closable text="" type="success" v-if="successMessages.length">
-              <p v-for="message in successMessages" :key="message">{{ message }}</p>
-            </v-alert>
+          <v-row>
+            <v-col cols="12">
+              <v-alert closable text="" type="error" v-if="errorMessages.length">
+                <p v-for="error in errorMessages" :key="error">{{ error }}</p>
+              </v-alert>
+              <v-alert closable text="" type="success" v-if="successMessages.length">
+                <p v-for="message in successMessages" :key="message">{{ message }}</p>
+              </v-alert>
+            </v-col>
           </v-row>
           <v-row v-if="viewContainer === 1" class="justify-center">
             <v-col cols="10">
